@@ -1,20 +1,19 @@
 import random
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+from util import plot
 
 def update_grid(grid_array, steps, grid_size):
     for step in range(1, steps):
-        for i in range(grid_size):
-            for j in range(grid_size):
+        for i in range(grid_size[0]):
+            for j in range(grid_size[1]):
 
-                neighbors_sum = (grid_array[step - 1][(i - 1) % grid_size][(j - 1) % grid_size] + 
-                                 grid_array[step - 1][(i - 1) % grid_size][j] + 
-                                 grid_array[step - 1][(i - 1) % grid_size][(j + 1) % grid_size] + 
-                                 grid_array[step - 1][i][(j - 1) % grid_size] + 
-                                 grid_array[step - 1][i][(j + 1) % grid_size] + 
-                                 grid_array[step - 1][(i + 1) % grid_size][(j - 1) % grid_size] + 
-                                 grid_array[step - 1][(i + 1) % grid_size][j] + 
-                                 grid_array[step - 1][(i + 1) % grid_size][(j + 1) % grid_size])
+                neighbors_sum = (grid_array[step - 1][(i - 1) % grid_size[0]][(j - 1) % grid_size[1]] + 
+                                 grid_array[step - 1][(i - 1) % grid_size[0]][j] + 
+                                 grid_array[step - 1][(i - 1) % grid_size[0]][(j + 1) % grid_size[1]] + 
+                                 grid_array[step - 1][i][(j - 1) % grid_size[1]] + 
+                                 grid_array[step - 1][i][(j + 1) % grid_size[1]] + 
+                                 grid_array[step - 1][(i + 1) % grid_size[0]][(j - 1) % grid_size[1]] + 
+                                 grid_array[step - 1][(i + 1) % grid_size[0]][j] + 
+                                 grid_array[step - 1][(i + 1) % grid_size[0]][(j + 1) % grid_size[1]])
                 
                 if grid_array[step - 1][i][j] == 1:
                     if neighbors_sum < 2 or neighbors_sum > 3:
@@ -29,25 +28,13 @@ def update_grid(grid_array, steps, grid_size):
         
     return grid_array
 
-def plot(grid_array, interval=80):
-    fig, ax = plt.subplots()
-    fig.subplots_adjust(0, 0, 1, 1)
-    ax.axis('off')
-    grid = grid_array[0]
-    img = ax.imshow(grid, cmap='Greys')
-    def animate(i):
-        img.set_data(grid_array[i])
-        return (img,)
-    ani = animation.FuncAnimation(fig, animate, frames=len(grid_array), interval=interval, blit=True)
-    plt.show()
-
 if __name__ == '__main__':
     # variables
-    grid_size = 100
+    grid_size = [100, 200]
     steps = 300
 
-    # create grid_array with size [steps][grid_size][grid_size]
-    grid_array = [[[random.choice([0, 1]) for i in range(grid_size)] for j in range(grid_size)] for k in range(steps)]
+    # create grid_array with size [steps][grid_size[0]][grid_size[1]]
+    grid_array = [[[random.choice([0, 1]) for j in range(grid_size[1])] for i in range(grid_size[0])] for k in range(steps)]
 
     # glider
     # grid_array[0][5][3] = 1
