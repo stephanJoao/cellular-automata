@@ -1,42 +1,38 @@
-import numpy as np
+import random
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-def update_grid(grid_inicial, steps):
-    grid_array = [grid_inicial]
-    
-    for step in range(steps-1):
-        grid = grid_array[-1]
+def update_grid(grid_array, steps, grid_size):
+    for step in range(1, steps):
         for i in range(grid_size):
             for j in range(grid_size):
-                left_neighbor_j = j - 1 if j > 0 else grid_size - 1
-                right_neighbor_j = j + 1 if j < grid_size - 1 else 0
-                up_neighbor_i = i - 1 if i > 0 else grid_size - 1
-                down_neighbor_i = i + 1 if i < grid_size - 1 else 0
 
-                neighbors_sum = (grid[up_neighbor_i][left_neighbor_j] + 
-                                 grid[up_neighbor_i][j] + 
-                                 grid[up_neighbor_i][right_neighbor_j] + 
-                                 grid[i][left_neighbor_j] + 
-                                 grid[i][right_neighbor_j] + 
-                                 grid[down_neighbor_i][left_neighbor_j] + 
-                                 grid[down_neighbor_i][j] + 
-                                 grid[down_neighbor_i][right_neighbor_j])
+                neighbors_sum = (grid_array[step - 1][(i - 1) % grid_size][(j - 1) % grid_size] + 
+                                 grid_array[step - 1][(i - 1) % grid_size][j] + 
+                                 grid_array[step - 1][(i - 1) % grid_size][(j + 1) % grid_size] + 
+                                 grid_array[step - 1][i][(j - 1) % grid_size] + 
+                                 grid_array[step - 1][i][(j + 1) % grid_size] + 
+                                 grid_array[step - 1][(i + 1) % grid_size][(j - 1) % grid_size] + 
+                                 grid_array[step - 1][(i + 1) % grid_size][j] + 
+                                 grid_array[step - 1][(i + 1) % grid_size][(j + 1) % grid_size])
                 
-                if grid[i][j] == 1:
+                if grid_array[step - 1][i][j] == 1:
                     if neighbors_sum < 2 or neighbors_sum > 3:
-                        grid[i][j] = 0
+                        grid_array[step][i][j] = 0
+                    else:
+                        grid_array[step][i][j] = 1
                 else:
                     if neighbors_sum == 3:
-                        grid[i][j] = 1
-
-        grid_array.append(grid)
+                        grid_array[step][i][j] = 1
+                    else:
+                        grid_array[step][i][j] = 0
         
-    return np.array(grid_array)
+    return grid_array
 
-def plot(grid_array, interval=20):
-    # create an animation of the grid_array printing a grid that changes every interval
+def plot(grid_array, interval=80):
     fig, ax = plt.subplots()
+    fig.subplots_adjust(0, 0, 1, 1)
+    ax.axis('off')
     grid = grid_array[0]
     img = ax.imshow(grid, cmap='Greys')
     def animate(i):
@@ -45,17 +41,58 @@ def plot(grid_array, interval=20):
     ani = animation.FuncAnimation(fig, animate, frames=len(grid_array), interval=interval, blit=True)
     plt.show()
 
+if __name__ == '__main__':
+    # variables
+    grid_size = 100
+    steps = 300
 
+    # create grid_array with size [steps][grid_size][grid_size]
+    grid_array = [[[random.choice([0, 1]) for i in range(grid_size)] for j in range(grid_size)] for k in range(steps)]
 
-# define grade inicial
-grid_size = 20
-steps = 100
+    # glider
+    # grid_array[0][5][3] = 1
+    # grid_array[0][5][4] = 1
+    # grid_array[0][5][5] = 1
+    # grid_array[0][4][5] = 1
+    # grid_array[0][3][4] = 1
 
-initial_grid = [[0 for i in range(grid_size)] for j in range(grid_size)]
-initial_grid[5][3] = 1
-initial_grid[5][4] = 1
-grid_array = []
+    # gosper's glider gun
+    # grid_array[0][1][5] = 1
+    # grid_array[0][1][6] = 1
+    # grid_array[0][2][5] = 1
+    # grid_array[0][2][6] = 1
+    # grid_array[0][11][5] = 1
+    # grid_array[0][11][6] = 1
+    # grid_array[0][11][7] = 1
+    # grid_array[0][12][4] = 1
+    # grid_array[0][12][8] = 1
+    # grid_array[0][13][3] = 1
+    # grid_array[0][13][9] = 1
+    # grid_array[0][14][3] = 1
+    # grid_array[0][14][9] = 1
+    # grid_array[0][15][6] = 1
+    # grid_array[0][16][4] = 1
+    # grid_array[0][16][8] = 1
+    # grid_array[0][17][5] = 1
+    # grid_array[0][17][6] = 1
+    # grid_array[0][17][7] = 1
+    # grid_array[0][18][6] = 1
+    # grid_array[0][21][3] = 1
+    # grid_array[0][21][4] = 1
+    # grid_array[0][21][5] = 1
+    # grid_array[0][22][3] = 1
+    # grid_array[0][22][4] = 1
+    # grid_array[0][22][5] = 1
+    # grid_array[0][23][2] = 1
+    # grid_array[0][23][6] = 1
+    # grid_array[0][25][1] = 1
+    # grid_array[0][25][2] = 1
+    # grid_array[0][25][6] = 1
+    # grid_array[0][25][7] = 1
+    # grid_array[0][35][3] = 1
+    # grid_array[0][35][4] = 1
+    # grid_array[0][36][3] = 1
+    # grid_array[0][36][4] = 1
 
-
-update_grid(initial_grid, steps)
-plot(initial_grid)
+    update_grid(grid_array, steps, grid_size)
+    plot(grid_array)
