@@ -35,4 +35,4 @@ if __name__ == '__main__':
     rule_binary = format(rule, '08b')
 
     update_grid(grid_array, steps, grid_size, rule_binary)
-    plot(grid_array)
+    plot(grid_array, interval=100, gif='output/elementary-cellular-automata')
