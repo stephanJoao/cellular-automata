@@ -1,5 +1,5 @@
 import random
-from util import plot, plot2D, plot3D, plot2D_seaborn
+from util import plot
 
 
 def update_grid(grid_array, steps, grid_size, lightning_prob=0.01):
@@ -71,4 +71,4 @@ if __name__ == "__main__":
         grid_array[0][x][y] = BURNING
 
     update_grid(grid_array, steps, grid_size, lightning_prob)
-    plot2D_seaborn(grid_array, interval=100, gif="output/fire-spread", colors=colors)
+    plot(grid_array, interval=100, gif="output/fire-spread", colors=colors)
