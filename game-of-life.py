@@ -1,23 +1,32 @@
 import random
 from util import plot
 
+
 def update_grid(grid_array, steps, grid_size):
     for step in range(1, steps):
         for i in range(grid_size[0]):
             for j in range(grid_size[1]):
 
                 neighbors_sum = (
-                    grid_array[step - 1][(i - 1) % grid_size[0]][(j - 1) % grid_size[1]] + 
-                    grid_array[step - 1][(i - 1) % grid_size[0]][j] + 
-                    grid_array[step - 1][(i - 1) % grid_size[0]][(j + 1) % grid_size[1]] + 
-                    grid_array[step - 1][i][(j - 1) % grid_size[1]] + 
-                    grid_array[step - 1][i][(j + 1) % grid_size[1]] + 
-                    grid_array[step - 1][(i + 1) % grid_size[0]][(j - 1) % grid_size[1]] + 
-                    grid_array[step - 1][(i + 1) % grid_size[0]][j] + 
-                    grid_array[step - 1][(i + 1) % grid_size[0]][(j + 1) % grid_size[1]]
+                    grid_array[step - 1][(i - 1) % grid_size[0]][
+                        (j - 1) % grid_size[1]
+                    ]
+                    + grid_array[step - 1][(i - 1) % grid_size[0]][j]
+                    + grid_array[step - 1][(i - 1) % grid_size[0]][
+                        (j + 1) % grid_size[1]
+                    ]
+                    + grid_array[step - 1][i][(j - 1) % grid_size[1]]
+                    + grid_array[step - 1][i][(j + 1) % grid_size[1]]
+                    + grid_array[step - 1][(i + 1) % grid_size[0]][
+                        (j - 1) % grid_size[1]
+                    ]
+                    + grid_array[step - 1][(i + 1) % grid_size[0]][j]
+                    + grid_array[step - 1][(i + 1) % grid_size[0]][
+                        (j + 1) % grid_size[1]
+                    ]
                 )
-                
-				# conway's rule
+
+                # conway's rule
                 if grid_array[step - 1][i][j] == 1:
                     if neighbors_sum < 2 or neighbors_sum > 3:
                         grid_array[step][i][j] = 0
@@ -28,18 +37,25 @@ def update_grid(grid_array, steps, grid_size):
                         grid_array[step][i][j] = 1
                     else:
                         grid_array[step][i][j] = 0
-        
+
     return grid_array
 
-if __name__ == '__main__':    
-	# variables
+
+if __name__ == "__main__":
+    # variables
     grid_size = [100, 100]
-    steps = 1000
+    steps = 100
 
     # create grid_array
-    grid_array = [[[random.choice([0, 1]) for j in range(grid_size[1])] for i in range(grid_size[0])] for k in range(steps)]
+    grid_array = [
+        [
+            [random.choice([0, 1]) for j in range(grid_size[1])]
+            for i in range(grid_size[0])
+        ]
+        for k in range(steps)
+    ]
 
-	# examples
+    # examples
     # glider
     # grid_array[0][5][3] = 1
     # grid_array[0][5][4] = 1
@@ -85,4 +101,4 @@ if __name__ == '__main__':
     # grid_array[0][36][4] = 1
 
     update_grid(grid_array, steps, grid_size)
-    plot(grid_array, interval=50, gif='output/game-of-life')
+    plot(grid_array, interval=50, gif="output/game-of-life")
