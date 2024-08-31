@@ -1,59 +1,61 @@
 import random
-from util import plot
+import numpy as np
+from util import animation
 
 
-def update_grid(grid_array, steps, grid_size):
-    for step in range(1, steps):
-        for i in range(grid_size[0]):
-            for j in range(grid_size[1]):
+def update_grid(grid):
+    new_grid = grid.copy()
 
-                neighbors_sum = (
-                    grid_array[step - 1][(i - 1) % grid_size[0]][
-                        (j - 1) % grid_size[1]
-                    ]
-                    + grid_array[step - 1][(i - 1) % grid_size[0]][j]
-                    + grid_array[step - 1][(i - 1) % grid_size[0]][
-                        (j + 1) % grid_size[1]
-                    ]
-                    + grid_array[step - 1][i][(j - 1) % grid_size[1]]
-                    + grid_array[step - 1][i][(j + 1) % grid_size[1]]
-                    + grid_array[step - 1][(i + 1) % grid_size[0]][
-                        (j - 1) % grid_size[1]
-                    ]
-                    + grid_array[step - 1][(i + 1) % grid_size[0]][j]
-                    + grid_array[step - 1][(i + 1) % grid_size[0]][
-                        (j + 1) % grid_size[1]
-                    ]
-                )
-
-                # conway's rule
-                if grid_array[step - 1][i][j] == 1:
-                    if neighbors_sum < 2 or neighbors_sum > 3:
-                        grid_array[step][i][j] = 0
-                    else:
-                        grid_array[step][i][j] = 1
+    for i in range(grid_size[0]):
+        for j in range(grid_size[1]):
+            neighbors_sum = (
+                grid[(i - 1) % grid_size[0]][(j - 1) % grid_size[1]]
+                + grid[(i - 1) % grid_size[0]][j]
+                + grid[(i - 1) % grid_size[0]][(j + 1) % grid_size[1]]
+                + grid[i][(j - 1) % grid_size[1]]
+                + grid[i][(j + 1) % grid_size[1]]
+                + grid[(i + 1) % grid_size[0]][(j - 1) % grid_size[1]]
+                + grid[(i + 1) % grid_size[0]][j]
+                + grid[(i + 1) % grid_size[0]][(j + 1) % grid_size[1]]
+            )
+            # conway's rule
+            if grid[i][j] == 1:
+                if neighbors_sum < 2 or neighbors_sum > 3:
+                    new_grid[i][j] = 0
                 else:
-                    if neighbors_sum == 3:
-                        grid_array[step][i][j] = 1
-                    else:
-                        grid_array[step][i][j] = 0
+                    new_grid[i][j] = 1
+            else:
+                if neighbors_sum == 3:
+                    new_grid[i][j] = 1
+                else:
+                    new_grid[i][j] = 0
 
-    return grid_array
+    return new_grid
 
 
 if __name__ == "__main__":
-    # variables
-    grid_size = [100, 100]
-    steps = 100
 
-    # create grid_array
-    grid_array = [
-        [
-            [random.choice([0, 1]) for j in range(grid_size[1])]
-            for i in range(grid_size[0])
-        ]
-        for k in range(steps)
-    ]
+    color_dict = {
+        0: (255, 255, 255),
+        1: (0, 0, 0),
+    }
+
+    grid_size = [100, 100]
+
+    initial_grid = np.zeros(grid_size)
+
+    # initialize cells
+    for i in range(grid_size[0]):
+        for j in range(grid_size[1]):
+            if random.random() < 0.5:
+                initial_grid[i][j] = 1
+
+    animation(
+        initial_grid,
+        update_grid,
+        color_dict,
+        cell_size=10,
+    )
 
     # examples
     # glider
@@ -99,6 +101,3 @@ if __name__ == "__main__":
     # grid_array[0][35][4] = 1
     # grid_array[0][36][3] = 1
     # grid_array[0][36][4] = 1
-
-    update_grid(grid_array, steps, grid_size)
-    plot(grid_array, interval=50, gif="output/game-of-life")

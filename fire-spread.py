@@ -1,6 +1,6 @@
 import random
 import numpy as np
-from animation import animation
+from util import animation, plot_results2
 
 
 def update_grid(grid):
@@ -32,17 +32,17 @@ def update_grid(grid):
 
 
 if __name__ == "__main__":
-    # variables
-    EMPTY, TREE, BURNING = 0, 1, 2
-    color_dict = {
-        0: (255, 255, 255),
-        1: (0, 255, 0),
-        2: (255, 0, 0),
-    }
-    grid_size = [500, 500]
-    tree_density = 0.5
 
-    
+    EMPTY, TREE, BURNING = 0, 1, 2
+
+    color_dict = {
+        EMPTY: (255, 255, 255),
+        TREE: (0, 255, 0),
+        BURNING: (255, 0, 0),
+    }
+
+    grid_size = [300, 300]
+    tree_density = 0.5
 
     # initial grid
     initial_grid = np.zeros(grid_size)
@@ -53,10 +53,12 @@ if __name__ == "__main__":
             if random.random() < tree_density:
                 initial_grid[i][j] = TREE
 
+    initial_grid_2 = initial_grid.copy()
+
     # initialize firebreaks
     firebreak_positions = [
-        slice(grid_size[0] * 2 / 3, grid_size[0] * 2 / 3 + 2),
-        slice(grid_size[0] * 1 / 3, grid_size[0] * 2 / 3),
+        slice(grid_size[0] * 0.55, grid_size[0] * 0.55 + 2),
+        slice(grid_size[0] * 0.2, grid_size[0] * 0.8),
     ]
 
     # set firebreaks
@@ -68,18 +70,34 @@ if __name__ == "__main__":
                 <= j
                 < firebreak_positions[1].stop
             ):
-                initial_grid[i][j] = EMPTY  # This region acts as a firebreak
+                initial_grid_2[i][j] = EMPTY
 
     # start fires at center
     i = grid_size[0] // 2
     j = grid_size[1] // 2
     initial_grid[i][j] = BURNING
+    initial_grid_2[i][j] = BURNING
 
-    # other possibilities: diff tree densities, multiple tree types,
-    # firebreaks (areas that can't burn), variable burn rates, wind,
-    # probabilistic spreads, topography, etc.
-    # lightning_prob = 0
-    # initial_random_fire_count = 0
+    # history
+    num_trees = np.array(np.sum(initial_grid == TREE))
+    num_fires = np.array(np.sum(initial_grid == BURNING))
 
-    initial_grid = np.array(initial_grid)
-    animation(initial_grid, update_grid, color_dict, cell_size=1, fps=60)
+    grid_history_1 = animation(
+        initial_grid,
+        update_grid,
+        color_dict,
+        cell_size=3,
+        fps=30,
+        with_history=True,
+        with_return=True,
+    )
+    grid_history_2 = animation(
+        initial_grid_2,
+        update_grid,
+        color_dict,
+        cell_size=3,
+        fps=30,
+        with_history=True,
+        with_return=True,
+    )
+    plot_results2(grid_history_1, grid_history_2)
